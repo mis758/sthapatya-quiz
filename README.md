@@ -1,1 +1,0 @@
-# sthapatya-quiz
