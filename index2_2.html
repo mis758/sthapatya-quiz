@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Skills Quiz 2 — Sthapatya Leasing</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;min-height:100vh}
+.hidden{display:none!important}
+.topbar{background:#0a1f44;padding:13px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.logo{width:34px;height:34px;background:#c9a227;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0a1f44;flex-shrink:0}
+.topbar-title{color:#fff;font-size:14px;font-weight:600}
+.topbar-sub{color:#c9a227;font-size:11px;margin-top:1px}
+.topbar-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.tbtn{padding:7px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s}
+.tbtn-quiz{background:#c9a227;color:#0a1f44}
+.tbtn-quiz:hover{background:#b8911f}
+.tbtn-admin{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.2)}
+.tbtn-admin:hover{background:rgba(255,255,255,0.22)}
+.tbtn-logout{background:rgba(220,50,50,0.3);color:#fff;border:1px solid rgba(255,100,100,0.3)}
+.page{max-width:660px;margin:0 auto;padding:24px 16px}
+.page-wide{max-width:1000px;margin:0 auto;padding:24px 16px}
+.card{background:#fff;border-radius:14px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,0.07);margin-bottom:16px}
+.card h2{font-size:20px;color:#0a1f44;margin-bottom:8px;font-weight:700}
+.card p{font-size:14px;color:#555;line-height:1.7;margin-bottom:18px}
+.badge-lvl{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#fef9c3;color:#854d0e;margin-bottom:14px;border:1px solid #fde047}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;color:#555;margin-bottom:5px;font-weight:500}
+.field input{width:100%;padding:11px 14px;border:1.5px solid #dde3ee;border-radius:9px;font-size:14px;color:#222;outline:none;font-family:inherit}
+.field input:focus{border-color:#0a1f44}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-primary{background:#0a1f44;color:#fff}
+.btn-primary:hover{background:#162f5e}
+.btn-outline{background:transparent;color:#666;border:1.5px solid #dde;margin-top:10px}
+.btn-outline:hover{background:#f4f7fb}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chip{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;background:#eef2fa;color:#0a1f44;border:1px solid #c9d6ee}
+.prog-wrap{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.prog-label{font-size:13px;color:#888;font-weight:500;white-space:nowrap}
+.prog-track{flex:1;height:6px;background:#eef2fa;border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:#c9a227;border-radius:3px;transition:width 0.35s}
+.q-sec-label{font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#8fa0bb;margin-bottom:10px}
+.q-text{font-size:16px;font-weight:600;color:#1a1a2e;line-height:1.55;margin-bottom:22px}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{width:100%;padding:14px 16px;border:1.5px solid #e0e8f4;border-radius:10px;font-size:14px;cursor:pointer;background:#fff;color:#333;text-align:left;display:flex;align-items:center;gap:14px;transition:all 0.15s;font-family:inherit}
+.opt:hover{background:#f4f8fd;border-color:#afc4e0}
+.opt.correct{background:#f0fdf4;border-color:#4ade80;color:#166534;pointer-events:none}
+.opt.wrong{background:#fff1f2;border-color:#fca5a5;color:#991b1b;pointer-events:none}
+.opt.reveal{background:#f0fdf4;border-color:#4ade80;color:#166534;pointer-events:none}
+.opt.disabled{pointer-events:none}
+.opt-letter{width:30px;height:30px;border-radius:8px;background:#eef2fa;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:#0a1f44}
+.opt.correct .opt-letter,.opt.reveal .opt-letter{background:#dcfce7;color:#166534}
+.opt.wrong .opt-letter{background:#ffe4e6;color:#991b1b}
+.feedback{display:none;align-items:center;gap:9px;padding:12px 16px;border-radius:10px;font-size:14px;font-weight:500;margin:12px 0}
+.feedback.ok{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;display:flex}
+.feedback.bad{background:#fff1f2;color:#991b1b;border:1px solid #fecdd3;display:flex}
+.btn-next{display:none;width:100%;padding:13px;background:#0a1f44;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-next:hover{background:#162f5e}
+.sc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:18px;border-bottom:1.5px solid #f0f4f8;flex-wrap:wrap;gap:10px}
+.sc-emp-name{font-size:18px;font-weight:700;color:#0a1f44}
+.sc-emp-role{font-size:13px;color:#888;margin-top:3px}
+.grade-pill{padding:8px 18px;border-radius:22px;font-size:15px;font-weight:700}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stat-box{background:#f4f8fd;border-radius:11px;padding:14px;text-align:center}
+.stat-val{font-size:26px;font-weight:700;color:#0a1f44}
+.stat-lbl{font-size:11px;color:#888;margin-top:3px}
+.sec-bars{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.bar-top{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:5px}
+.bar-track{height:9px;background:#eef2fa;border-radius:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:5px;transition:width 0.6s ease}
+.remark-box{background:#fdf6e3;border:1px solid #e8d48a;border-radius:10px;padding:14px;font-size:13px;color:#5a4a00;line-height:1.65;margin-bottom:16px}
+.save-note{text-align:center;font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:10px;font-weight:500}
+.save-note.saving{background:#f0f4f8;color:#666}
+.save-note.saved{background:#f0fdf4;color:#166534}
+.save-note.error{background:#fff1f2;color:#991b1b}
+.login-wrap{max-width:400px;margin:0 auto}
+.admin-tag{background:#0a1f44;color:#c9a227;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:14px}
+.dash-toprow{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:8px}
+.dash-title{font-size:18px;font-weight:700;color:#0a1f44}
+.dash-sub{font-size:12px;color:#888;margin-top:2px}
+.dash-btns{display:flex;gap:8px}
+.action-btn{padding:8px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid #dde3ee;background:#f4f8fd;color:#0a1f44;font-family:inherit}
+.action-btn:hover{background:#e4eef8}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.sum-card{background:#f4f8fd;border-radius:11px;padding:14px;text-align:center}
+.sum-val{font-size:24px;font-weight:700;color:#0a1f44}
+.sum-lbl{font-size:10px;color:#888;margin-top:3px;text-transform:uppercase;letter-spacing:0.4px}
+.filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.filter-btn{padding:5px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid #dde3ee;background:#fff;color:#555;font-family:inherit}
+.filter-btn.active{background:#0a1f44;color:#fff;border-color:#0a1f44}
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid #eef2f8}
+.score-tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:750px}
+.score-tbl thead tr{background:#0a1f44}
+.score-tbl th{padding:11px 14px;text-align:left;font-weight:500;font-size:11px;color:#c9a227;letter-spacing:0.3px}
+.score-tbl tbody tr{border-bottom:1px solid #f0f4f8}
+.score-tbl tbody tr:last-child{border-bottom:none}
+.score-tbl tbody tr:hover{background:#f9fbff}
+.score-tbl td{padding:12px 14px;color:#333;vertical-align:middle}
+.emp-name{font-weight:600;color:#0a1f44;font-size:14px}
+.emp-role{font-size:11px;color:#888;margin-top:1px}
+.score-big{font-weight:700;color:#0a1f44;font-size:15px}
+.score-sub{font-size:11px;color:#888;margin-top:1px}
+.grade-badge{display:inline-block;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700}
+.g-aplus{background:#dcfce7;color:#166534}
+.g-a{background:#dbeafe;color:#1e40af}
+.g-b{background:#fef9c3;color:#854d0e}
+.g-c{background:#fee2e2;color:#991b1b}
+.g-d{background:#f3e8ff;color:#6b21a8}
+.sec-mini{display:flex;flex-direction:column;gap:3px}
+.sec-mini-row{display:flex;align-items:center;gap:6px}
+.sec-mini-lbl{font-size:10px;color:#888;width:72px;flex-shrink:0}
+.sec-mini-track{flex:1;height:5px;background:#eef2fa;border-radius:3px;overflow:hidden}
+.sec-mini-fill{height:100%;border-radius:3px}
+.sec-mini-pct{font-size:10px;color:#888;width:28px;text-align:right;flex-shrink:0}
+.date-cell{font-size:11px;color:#aaa}
+.empty-state{text-align:center;padding:50px 20px}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.empty-title{font-size:15px;color:#888;margin-bottom:6px}
+.empty-sub{font-size:13px;color:#aaa}
+.loading-row td{text-align:center;padding:40px;color:#888;font-size:14px}
+.err-box{background:#fff1f2;border:1px solid #fca5a5;border-radius:9px;padding:12px 16px;font-size:13px;color:#991b1b;margin-bottom:14px}
+.info-box{background:#e8f0fe;border:1px solid #93c5fd;border-radius:9px;padding:12px 16px;font-size:13px;color:#1e40af;margin-bottom:14px;line-height:1.6}
+@media(max-width:540px){.field-row{grid-template-columns:1fr}.summary-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">S</div>
+  <div>
+    <div class="topbar-title">Digital Skills Quiz 2 — Advanced</div>
+    <div class="topbar-sub">Sthapatya Leasing & Consultant</div>
+  </div>
+  <div class="topbar-right">
+    <button class="tbtn tbtn-quiz" onclick="goQuiz()">📝 Quiz</button>
+    <button class="tbtn tbtn-admin" id="btn-tab-admin" onclick="goAdminLogin()">🔐 Admin</button>
+    <button class="tbtn tbtn-logout hidden" id="btn-logout" onclick="doLogout()">Logout</button>
+  </div>
+</div>
+
+<div id="page-quiz" class="page">
+  <div id="quiz-start">
+    <div class="card">
+      <div class="badge-lvl">⚡ Advanced Level — Quiz 2</div>
+      <h2>Employee Digital Skills Assessment</h2>
+      <p>20 advanced questions — 6 tools ka in-depth knowledge test.</p>
+      <div class="chips">
+        <span class="chip">🤖 ChatGPT</span>
+        <span class="chip">📊 Google Sheets</span>
+        <span class="chip">☁️ Google Drive</span>
+        <span class="chip">📧 Gmail</span>
+        <span class="chip">📑 PowerPoint</span>
+        <span class="chip">📓 NotebookLM</span>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Apna poora naam *</label><input type="text" id="inp-name" placeholder="Rahul Sharma" autocomplete="off"></div>
+        <div class="field"><label>Designation *</label><input type="text" id="inp-role" placeholder="Sr. Consultant" autocomplete="off"></div>
+      </div>
+      <button class="btn btn-primary" onclick="startQuiz()">Quiz Shuru Karein →</button>
+    </div>
+  </div>
+
+  <div id="quiz-qscreen" class="hidden">
+    <div class="card">
+      <div class="prog-wrap">
+        <div class="prog-label" id="prog-label">1 / 20</div>
+        <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:5%"></div></div>
+        <div class="prog-label" id="prog-pct" style="text-align:right">0%</div>
+      </div>
+      <div class="q-sec-label" id="q-sec"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="q-opts"></div>
+    </div>
+    <div class="feedback" id="q-feedback"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Agla Sawaal →</button>
+  </div>
+
+  <div id="quiz-scorecard" class="hidden">
+    <div class="card">
+      <div class="sc-header">
+        <div><div class="sc-emp-name" id="sc-name"></div><div class="sc-emp-role" id="sc-role"></div></div>
+        <div class="grade-pill" id="sc-grade"></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-val" id="sc-score"></div><div class="stat-lbl">Score</div></div>
+        <div class="stat-box"><div class="stat-val" id="sc-pct"></div><div class="stat-lbl">Percentage</div></div>
+        <div class="stat-box"><div class="stat-val" id="sc-correct"></div><div class="stat-lbl">Sahi Jawab</div></div>
+      </div>
+      <div class="sec-bars" id="sc-secbars"></div>
+      <div class="remark-box" id="sc-remark"></div>
+      <div class="save-note saving" id="sc-savenote">⏳ Score save ho raha hai...</div>
+      <button class="btn btn-outline" onclick="restartQuiz()">🔄 Agle Employee ka Quiz</button>
+    </div>
+  </div>
+</div>
+
+<div id="page-adminlogin" class="page hidden">
+  <div class="login-wrap">
+    <div class="card">
+      <div class="admin-tag">ADMIN ACCESS</div>
+      <h2 style="margin-bottom:6px">Admin Dashboard</h2>
+      <p>Quiz 2 ke sabke scores dekhne ke liye login karein.</p>
+      <div class="field"><label>Admin Password</label><input type="password" id="inp-pass" placeholder="Password dalein" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <button class="btn btn-primary" onclick="doLogin()">Login →</button>
+      <div id="login-err" class="hidden" style="color:#991b1b;font-size:13px;margin-top:10px;background:#fff1f2;padding:8px 12px;border-radius:7px">❌ Galat password.</div>
+    </div>
+  </div>
+</div>
+
+<div id="page-admin" class="page-wide hidden">
+  <div class="card">
+    <div class="dash-toprow">
+      <div><div class="dash-title">Score Dashboard — Quiz 2</div><div class="dash-sub">Sthapatya Leasing — Advanced Level 2026</div></div>
+      <div class="dash-btns">
+        <button class="action-btn" onclick="loadScores()">↻ Refresh</button>
+        <button class="action-btn" onclick="exportCSV()">⬇️ CSV Export</button>
+      </div>
+    </div>
+    <div id="adm-info" class="info-box hidden"></div>
+    <div id="adm-err" class="err-box hidden"></div>
+    <div class="summary-grid">
+      <div class="sum-card"><div class="sum-val" id="d-total">—</div><div class="sum-lbl">Total</div></div>
+      <div class="sum-card"><div class="sum-val" id="d-avg">—</div><div class="sum-lbl">Average</div></div>
+      <div class="sum-card"><div class="sum-val" id="d-top">—</div><div class="sum-lbl">Top Score</div></div>
+      <div class="sum-card"><div class="sum-val" id="d-ag">—</div><div class="sum-lbl">A / A+</div></div>
+    </div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="applyFilter('all',this)">Sab</button>
+      <button class="filter-btn" onclick="applyFilter('A+',this)">A+</button>
+      <button class="filter-btn" onclick="applyFilter('A',this)">A</button>
+      <button class="filter-btn" onclick="applyFilter('B',this)">B</button>
+      <button class="filter-btn" onclick="applyFilter('C',this)">C</button>
+      <button class="filter-btn" onclick="applyFilter('D',this)">D</button>
+    </div>
+    <div class="tbl-wrap">
+      <table class="score-tbl">
+        <thead><tr><th>#</th><th>Employee</th><th>Score</th><th>Grade</th><th>Section Performance</th><th>Date</th></tr></thead>
+        <tbody id="score-tbody"><tr class="loading-row"><td colspan="6">⏳ Load ho raha hai...</td></tr></tbody>
+      </table>
+    </div>
+    <div id="empty-dash" class="empty-state hidden">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">Abhi tak koi score nahi</div>
+      <div class="empty-sub">Employees quiz denge tab yahan dikhega</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API="https://script.google.com/macros/s/AKfycbzG5vWCHu6pLN9TQA5K8HBnr5zx5XyS1WX7Sf3tN2A6e75mlZg0Kkcpw5dhDSPyCusI/exec";
+const ADMIN_PASSWORD="sthapatya@2026";
+
+// Questions with shuffled answer positions
+const QS=[
+  {s:"ChatGPT",q:"ChatGPT mein lambi conversation ke baad woh pehle ki baatein bhool jaata hai — iska kya karan hai?",o:["ChatGPT ka subscription expire ho gaya","ChatGPT sirf 10 messages tak kaam karta hai","ChatGPT ka context window limited hota hai — ek session mein itna hi yaad rakh sakta hai","ChatGPT ka internet slow hai"],a:2},
+  {s:"ChatGPT",q:"Property valuation report draft karwane ke liye ChatGPT ko sabse acha prompt kaun sa hoga?",o:["'Report likhdo'","'Ek professional property valuation report draft karo — 5000 sq ft warehouse, Sitapura Jaipur, Rs 28/sqft, 5 year lease, formal tone mein'","'Warehouse ka price batao'","'Property report banao'"],a:1},
+  {s:"ChatGPT",q:"ChatGPT se kaam lete waqt 'hallucination' ka kya matlab hai?",o:["ChatGPT ne image generate ki","ChatGPT ka interface slow hua","ChatGPT ne Hindi mein jawab diya","ChatGPT galat ya made-up information confidently deta hai jo sach nahi hoti"],a:3},
+  {s:"ChatGPT",q:"ChatGPT se 10 alag alag client cold email templates mangwane ka best tarika kya hai?",o:["ChatGPT email nahi likh sakta","'10 different cold email templates banao — commercial real estate broker ke liye, manufacturing, retail, warehouse industries ke clients ke liye'","Ek baar mein sirf ek template maango","'Email likho' itna hi kaafi hai"],a:1},
+  {s:"Google Sheets",q:"Column A mein city, Column B mein requirement type hai. Sirf Jaipur ke Warehouse leads count karne ka sahi formula kaun sa hai?",o:["=COUNTIFS(A:A,\"Jaipur\",B:B,\"Warehouse\")","=COUNT(A:A)","=VLOOKUP(\"Jaipur\",A:B,2,0)","=SUM(A:A)"],a:0},
+  {s:"Google Sheets",q:"VLOOKUP function ka kya kaam hota hai Google Sheets mein?",o:["Data ko A to Z sort karna","Sheet ko PDF mein convert karna","Cells ka background color change karna","Ek table mein se value dhundh ke uske saath wali column ki value return karna"],a:3},
+  {s:"Google Sheets",q:"Google Sheets mein dropdown list banana hai jisme sirf Warehouse/Office/Retail options hon — yeh kahan se karein?",o:["View > Freeze","Insert > Chart","Data > Data Validation","Format > Text Wrapping"],a:2},
+  {s:"Google Drive",q:"'Shared Drive' aur 'My Drive' mein kya fark hai?",o:["Shared Drive sirf photos ke liye hoti hai","Koi fark nahi — dono ek jaisi hain","My Drive sirf office computers par kaam karta hai","My Drive personal hai — Shared Drive team ka hota hai jahan ownership kisi ek ki nahi hoti"],a:3},
+  {s:"Google Drive",q:"Aapne file client ko share ki thi — ab unka access hatana chahte hain. Kya karein?",o:["Naya Google account banao","File ka naam change karo","File par right-click > Share > Client ka naam dhundho > Remove access","File delete karo"],a:2},
+  {s:"Google Drive",q:"Google Drive mein 'Version History' ka kya faida hai?",o:["File ko compress karna","File ka size check karna","File share karna","File ke purane versions dekhna aur zaroorat par restore karna"],a:3},
+  {s:"Gmail",q:"Gmail mein 'Templates' (Canned Responses) ka kya faida hai?",o:["Spam filter ON karna","Emails automatically delete karna","Emails schedule karna","Baar baar bheje jaane wale emails ko save karke ek click mein use karna"],a:3},
+  {s:"Gmail",q:"'Property inquiry' word wale emails automatically ek label mein aayein — yeh kaise setup karein?",o:["Sirf Gmail Premium mein hota hai","Inbox mein manually search karein","Settings > Filters and Blocked Addresses > Create filter > specific words > Apply label","Har email manually label karein"],a:2},
+  {s:"Gmail",q:"Gmail mein 'Schedule Send' feature kab use karna chahiye?",o:["Jab attachment badi ho","Jab email galat ho jaaye","Jab client ko specific time par email bhejni ho jaise Monday 9 AM","Jab email urgent ho"],a:2},
+  {s:"PowerPoint",q:"'Slide Master' ka kya kaam hota hai PowerPoint mein?",o:["Presentation ko PDF mein save karna","Slides delete karna","Sirf ek slide banana","Poori presentation ka design, font aur colors ek jagah se control karna — sab slides ek saath update hoti hain"],a:3},
+  {s:"PowerPoint",q:"Client presentation mein 'Presenter View' ka kya faida milta hai?",o:["Presentation automatically record hoti hai","Aap apne screen par notes aur next slide dekh sakte hain jabki client sirf current slide dekhta hai","Font bada ho jaata hai","Slides auto-play hoti hain"],a:1},
+  {s:"PowerPoint",q:"Presentation mein insert ki gayi image slide se bahar ja rahi hai — best solution kya hai?",o:["Slide ka layout change karo","Font size chota karo","Image delete karke naya slide banao","Image select karo > corners se drag karke resize karo ya Picture Format > Crop use karo"],a:3},
+  {s:"PowerPoint",q:"PowerPoint presentation share karne ka sabse professional tarika kaun sa hai?",o:["Screenshot lekar WhatsApp par bhejo","Presentation print karke dedo",".pptx file seedha email mein attach karo","File > Export > PDF mein save karo — formatting sab devices par same rahegi"],a:3},
+  {s:"NotebookLM",q:"NotebookLM kya hai aur yeh ChatGPT se kaise alag hai?",o:["Yeh Excel ka advance version hai","Yeh Google ka AI tool hai jo sirf aapke uploaded documents ke basis par jawab deta hai — internet use nahi karta","Yeh ek email writing tool hai","Yeh ek video editing tool hai"],a:1},
+  {s:"NotebookLM",q:"NotebookLM mein 5 property documents upload karne ke baad aap kya kar sakte hain?",o:["Sirf documents delete kar sakte hain","Internet par search kar sakte hain","Sirf documents print kar sakte hain","Un documents ke baare mein questions pooch sakte hain, summary bana sakte hain, compare kar sakte hain"],a:3},
+  {s:"NotebookLM",q:"NotebookLM ka 'Audio Overview' feature kya karta hai?",o:["YouTube videos play karta hai","Microphone se notes record karta hai","Documents ko audio file mein convert karta hai","Aapke documents ka podcast-style audio summary generate karta hai jise aap sun sakte hain"],a:3}
+];
+
+const SECS=["ChatGPT","Google Sheets","Google Drive","Gmail","PowerPoint","NotebookLM"];
+const SCOL={"ChatGPT":"#7c3aed","Google Sheets":"#16a34a","Google Drive":"#2563eb","Gmail":"#dc2626","PowerPoint":"#d97706","NotebookLM":"#0891b2"};
+
+let cur=0,score=0,answered=false,empName="",empRole="";
+const secSc={};SECS.forEach(s=>secSc[s]={g:0,t:0});QS.forEach(q=>secSc[q.s].t++);
+let allData=[];let activeFilter="all";
+
+function showPage(id){["page-quiz","page-adminlogin","page-admin"].forEach(p=>document.getElementById(p).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");}
+function goQuiz(){showPage("page-quiz");}
+function goAdminLogin(){showPage("page-adminlogin");setTimeout(()=>document.getElementById("inp-pass").focus(),100);}
+function doLogout(){document.getElementById("btn-logout").classList.add("hidden");document.getElementById("btn-tab-admin").classList.remove("hidden");document.getElementById("inp-pass").value="";showPage("page-quiz");}
+
+function startQuiz(){
+  empName=document.getElementById("inp-name").value.trim();
+  empRole=document.getElementById("inp-role").value.trim();
+  if(!empName){alert("Apna naam dalein.");return;}
+  if(!empRole){alert("Designation dalein.");return;}
+  cur=0;score=0;answered=false;SECS.forEach(s=>{secSc[s].g=0;});
+  document.getElementById("quiz-start").classList.add("hidden");
+  document.getElementById("quiz-scorecard").classList.add("hidden");
+  document.getElementById("quiz-qscreen").classList.remove("hidden");
+  renderQ();
+}
+
+function renderQ(){
+  answered=false;
+  const q=QS[cur];
+  const p=Math.round((cur/QS.length)*100);
+  document.getElementById("prog-label").textContent=(cur+1)+" / "+QS.length;
+  document.getElementById("prog-fill").style.width=Math.max(5,p)+"%";
+  document.getElementById("prog-pct").textContent=p+"%";
+  document.getElementById("q-sec").textContent=q.s;
+  document.getElementById("q-text").textContent=(cur+1)+". "+q.q;
+  const L=["A","B","C","D"];
+  document.getElementById("q-opts").innerHTML=q.o.map((o,i)=>`<button class="opt" onclick="pickAnswer(${i})"><span class="opt-letter">${L[i]}</span>${o}</button>`).join("");
+  const fb=document.getElementById("q-feedback");fb.style.display="none";fb.className="feedback";
+  const nb=document.getElementById("btn-next");nb.style.display="none";
+  nb.textContent=cur===QS.length-1?"✅ Result Dekhein":"Agla Sawaal →";
+}
+
+function pickAnswer(i){
+  if(answered)return;answered=true;
+  const q=QS[cur];
+  document.querySelectorAll(".opt").forEach(b=>b.classList.add("disabled"));
+  const fb=document.getElementById("q-feedback");
+  if(i===q.a){
+    document.querySelectorAll(".opt")[i].classList.add("correct");
+    score++;secSc[q.s].g++;
+    fb.className="feedback ok";fb.innerHTML="✅ &nbsp;<strong>Sahi jawab!</strong>";
+  } else {
+    document.querySelectorAll(".opt")[i].classList.add("wrong");
+    document.querySelectorAll(".opt")[q.a].classList.add("reveal");
+    fb.className="feedback bad";fb.innerHTML="❌ &nbsp;Galat! Sahi jawab: <strong>"+["A","B","C","D"][q.a]+"</strong>";
+  }
+  fb.style.display="flex";document.getElementById("btn-next").style.display="block";
+}
+
+function nextQuestion(){cur++;if(cur>=QS.length){showScorecard();return;}renderQ();}
+
+function getGrade(p){
+  if(p>=85)return{g:"A+",c:"#166534",bg:"#dcfce7",r:"🏆 Excellent! Advanced tools mein bhi expert hain."};
+  if(p>=70)return{g:"A",c:"#1e40af",bg:"#dbeafe",r:"👍 Bahut acha! Advanced level comfortable hai."};
+  if(p>=55)return{g:"B",c:"#854d0e",bg:"#fef9c3",r:"📚 Acha base hai. Advanced features aur explore karo."};
+  if(p>=40)return{g:"C",c:"#9a3412",bg:"#fee2e2",r:"⚠️ Advanced training chahiye. Weak topics pe focus karo."};
+  return{g:"D",c:"#6b21a8",bg:"#f3e8ff",r:"🔰 Pehle Quiz 1 master karo, phir yahan aao."};
+}
+
+function showScorecard(){
+  document.getElementById("quiz-qscreen").classList.add("hidden");
+  document.getElementById("quiz-scorecard").classList.remove("hidden");
+  document.getElementById("prog-fill").style.width="100%";document.getElementById("prog-pct").textContent="100%";
+  const p=Math.round((score/QS.length)*100);
+  const{g,c,bg,r}=getGrade(p);
+  document.getElementById("sc-name").textContent=empName;
+  document.getElementById("sc-role").textContent=empRole;
+  document.getElementById("sc-score").textContent=score+" / "+QS.length;
+  document.getElementById("sc-pct").textContent=p+"%";
+  document.getElementById("sc-correct").textContent=score;
+  const gp=document.getElementById("sc-grade");
+  gp.textContent="Grade "+g;gp.style.background=bg;gp.style.color=c;gp.style.border="2px solid "+c+"55";
+  document.getElementById("sc-secbars").innerHTML=SECS.map(s=>{
+    const pv=Math.round((secSc[s].g/secSc[s].t)*100);
+    const col=SCOL[s];
+    return`<div><div class="bar-top"><span style="font-weight:500">${s}</span><span>${secSc[s].g}/${secSc[s].t} (${pv}%)</span></div><div class="bar-track"><div class="bar-fill" style="width:${pv}%;background:${col}"></div></div></div>`;
+  }).join("");
+  document.getElementById("sc-remark").innerHTML="<strong>Result:</strong> "+r;
+  submitScore(empName,empRole,score,p,g);
+}
+
+function submitScore(name,role,sc,pct,grade){
+  const sn=document.getElementById("sc-savenote");
+  sn.className="save-note saving";sn.textContent="⏳ Score save ho raha hai...";
+  const payload={
+    name,role,score:sc,pct,grade,
+    quiz:"Quiz 2 - Advanced",
+    chatgpt:secSc["ChatGPT"].g+"/"+secSc["ChatGPT"].t,
+    gsheets:secSc["Google Sheets"].g+"/"+secSc["Google Sheets"].t,
+    gdrive:secSc["Google Drive"].g+"/"+secSc["Google Drive"].t,
+    gmail:secSc["Gmail"].g+"/"+secSc["Gmail"].t,
+    powerpoint:secSc["PowerPoint"].g+"/"+secSc["PowerPoint"].t,
+    notebooklm:secSc["NotebookLM"].g+"/"+secSc["NotebookLM"].t
+  };
+  fetch(API,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)})
+    .then(()=>{sn.className="save-note saved";sn.textContent="✅ Score Google Sheet mein save ho gaya!";})
+    .catch(()=>{sn.className="save-note error";sn.textContent="⚠️ Internet check karein — score save nahi hua.";});
+}
+
+function restartQuiz(){
+  document.getElementById("quiz-scorecard").classList.add("hidden");
+  document.getElementById("inp-name").value="";document.getElementById("inp-role").value="";
+  document.getElementById("quiz-start").classList.remove("hidden");
+}
+
+function doLogin(){
+  const p=document.getElementById("inp-pass").value;
+  if(p===ADMIN_PASSWORD){
+    document.getElementById("login-err").classList.add("hidden");
+    document.getElementById("btn-tab-admin").classList.add("hidden");
+    document.getElementById("btn-logout").classList.remove("hidden");
+    showPage("page-admin");loadScores();
+  } else {
+    document.getElementById("login-err").classList.remove("hidden");
+    document.getElementById("inp-pass").value="";
+  }
+}
+
+function applyFilter(f,btn){
+  activeFilter=f;
+  document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");renderTable();
+}
+
+function loadScores(){
+  const tb=document.getElementById("score-tbody");
+  const info=document.getElementById("adm-info");
+  document.getElementById("adm-err").classList.add("hidden");
+  document.getElementById("empty-dash").classList.add("hidden");
+  tb.innerHTML='<tr class="loading-row"><td colspan="6">⏳ Google Sheet se scores load ho rahe hain...</td></tr>';
+
+  // Check if running locally
+  if(window.location.protocol==="file:"){
+    info.innerHTML="ℹ️ <strong>Local file mode:</strong> Admin dashboard sirf tab kaam karta hai jab file GitHub par host ho. File GitHub par upload karein: <strong>mis758.github.io/sthapatya-quiz/index2.html</strong>";
+    info.classList.remove("hidden");
+    tb.innerHTML="";
+    document.getElementById("empty-dash").classList.remove("hidden");
+    return;
+  }
+
+  info.classList.add("hidden");
+  fetch(API,{method:"GET"})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==="ok"){
+        allData=(d.data||[]).filter(r=>String(r["quiz"]||r["Quiz"]||"").includes("Quiz 2"));
+        renderTable();
+      } else {showErr("Sheet se data nahi aaya. Refresh karein.");}
+    })
+    .catch(()=>{showErr("Google Sheet se connect nahi ho pa raha. Internet check karein aur Refresh karein.");tb.innerHTML="";document.getElementById("empty-dash").classList.remove("hidden");});
+}
+
+function showErr(m){const e=document.getElementById("adm-err");e.textContent="⚠️ "+m;e.classList.remove("hidden");}
+
+function renderTable(){
+  const tb=document.getElementById("score-tbody");
+  const ed=document.getElementById("empty-dash");
+  if(!allData||allData.length===0){
+    tb.innerHTML="";ed.classList.remove("hidden");
+    ["d-total","d-avg","d-top","d-ag"].forEach(id=>document.getElementById(id).textContent="0");
+    return;
+  }
+  ed.classList.add("hidden");
+  const pcts=allData.map(r=>Number(String(r["Percentage"]||r["percentage"]||"0").replace("%",""))||0);
+  const avg=Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length);
+  const top=Math.max(...pcts);
+  const ag=allData.filter(r=>{const g=String(r["Grade"]||r["grade"]||"");return g==="A+"||g==="A";}).length;
+  document.getElementById("d-total").textContent=allData.length;
+  document.getElementById("d-avg").textContent=avg+"%";
+  document.getElementById("d-top").textContent=top+"%";
+  document.getElementById("d-ag").textContent=ag;
+
+  const filtered=activeFilter==="all"?allData:allData.filter(r=>String(r["Grade"]||r["grade"]||"")===activeFilter);
+  if(filtered.length===0){
+    tb.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:#aaa">Is grade mein koi result nahi.</td></tr>';
+    return;
+  }
+  const sorted=[...filtered].sort((a,b)=>(Number(String(b["Percentage"]||b["percentage"]||"0").replace("%",""))||0)-(Number(String(a["Percentage"]||a["percentage"]||"0").replace("%",""))||0));
+  const gcl=g=>g==="A+"?"g-aplus":g==="A"?"g-a":g==="B"?"g-b":g==="C"?"g-c":"g-d";
+  tb.innerHTML=sorted.map((r,i)=>{
+    const naam=r["Naam"]||r["naam"]||r["name"]||"—";
+    const role=r["Designation"]||r["designation"]||r["role"]||"—";
+    const sc=r["Score"]||r["score"]||"—";
+    const pct=r["Percentage"]||r["percentage"]||"—";
+    const grade=r["Grade"]||r["grade"]||"—";
+    const date=r["Date"]||r["date"]||r["Timestamp"]||"—";
+    const secs=[
+      {l:"ChatGPT",v:r["chatgpt"]},{l:"G.Sheets",v:r["gsheets"]},
+      {l:"G.Drive",v:r["gdrive"]},{l:"Gmail",v:r["gmail"]},
+      {l:"PPT",v:r["powerpoint"]},{l:"NbookLM",v:r["notebooklm"]}
+    ];
+    const sh=secs.map(s=>{
+      if(!s.v)return"";
+      const pts=String(s.v).split("/");
+      const pv=pts.length===2?Math.round((Number(pts[0])/Number(pts[1]))*100):0;
+      const col=SCOL[s.l==="G.Sheets"?"Google Sheets":s.l==="G.Drive"?"Google Drive":s.l==="PPT"?"PowerPoint":s.l==="NbookLM"?"NotebookLM":s.l]||"#888";
+      return`<div class="sec-mini-row"><span class="sec-mini-lbl">${s.l}</span><div class="sec-mini-track"><div class="sec-mini-fill" style="width:${pv}%;background:${col}"></div></div><span class="sec-mini-pct">${pv}%</span></div>`;
+    }).join("");
+    return`<tr><td style="color:#bbb;font-size:11px">${i+1}</td><td><div class="emp-name">${naam}</div><div class="emp-role">${role}</div></td><td><div class="score-big">${sc}</div><div class="score-sub">${pct}</div></td><td><span class="grade-badge ${gcl(grade)}">${grade}</span></td><td><div class="sec-mini">${sh}</div></td><td class="date-cell">${date}</td></tr>`;
+  }).join("");
+}
+
+function exportCSV(){
+  if(!allData||allData.length===0){alert("Koi score nahi hai.");return;}
+  const sorted=[...allData].sort((a,b)=>(Number(String(b["Percentage"]||b["percentage"]||"0").replace("%",""))||0)-(Number(String(a["Percentage"]||a["percentage"]||"0").replace("%",""))||0));
+  const h=["Rank","Naam","Designation","Score","Percentage","Grade","ChatGPT","Google Sheets","Google Drive","Gmail","PowerPoint","NotebookLM","Date"];
+  const rows=sorted.map((r,i)=>[i+1,r["Naam"]||r["naam"]||r["name"]||"",r["Designation"]||r["designation"]||r["role"]||"",r["Score"]||r["score"]||"",r["Percentage"]||r["percentage"]||"",r["Grade"]||r["grade"]||"",r["chatgpt"]||"",r["gsheets"]||"",r["gdrive"]||"",r["gmail"]||"",r["powerpoint"]||"",r["notebooklm"]||"",r["Date"]||r["date"]||r["Timestamp"]||""].map(v=>`"${v}"`).join(","));
+  const csv=[h.join(","),...rows].join("\n");
+  const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,\uFEFF"+encodeURIComponent(csv);a.download="Sthapatya_Quiz2_Scores.csv";a.click();
+}
+
+showPage("page-quiz");
+</script>
+</body>
+</html>
