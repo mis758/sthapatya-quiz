@@ -1,1 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sthapatya Digital Skills Quiz 4</title>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--ink:#1c2433;--mute:#667085;--brand:#1f4e8c;--ok:#18794e;--bad:#c0392b;--line:#e3e8ef}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin-top:16px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:18px;margin:0 0 12px}
+.sub{color:var(--mute);font-size:14px}
+.badge{display:inline-block;background:#e8f0fb;color:var(--brand);font-weight:600;font-size:12px;padding:4px 10px;border-radius:99px;margin-bottom:10px}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 4px}
+input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:15px}
+button{background:var(--brand);color:#fff;border:0;border-radius:8px;padding:11px 20px;font-size:15px;font-weight:600;cursor:pointer;margin-top:16px}
+button.alt{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.bar{height:6px;background:var(--line);border-radius:9px;overflow:hidden;margin:6px 0 14px}
+.bar>i{display:block;height:100%;background:var(--brand);width:0}
+.sec{font-size:12px;color:var(--brand);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.q{font-size:18px;font-weight:600;margin:6px 0 14px;line-height:1.4}
+.opt{display:block;width:100%;text-align:left;background:#fff;color:var(--ink);border:1px solid var(--line);margin:8px 0 0;padding:12px 14px;font-weight:500}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt.ok{background:#e7f6ee;border-color:var(--ok)}.opt.no{background:#fdecea;border-color:var(--bad)}
+.opt:disabled{opacity:1;cursor:default}
+.exp{margin-top:14px;padding:12px 14px;background:#f7f9fc;border-left:4px solid var(--brand);border-radius:6px;font-size:14px;line-height:1.5}
+.big{font-size:44px;font-weight:800;color:var(--brand);margin:4px 0}
+.row{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:14px}.row b{min-width:130px}.row span{min-width:140px;font-size:13px}.g{color:var(--ok);font-weight:600}.r{color:var(--bad);font-weight:600}
+.row .bar{flex:1;margin:0}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+th{background:#f7f9fc}.hide{display:none}.note{color:var(--bad);font-size:13px;margin-top:8px}
+.link{background:none;color:var(--mute);padding:0;font-size:12px;margin-top:20px;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
 
+<div id="start" class="card">
+  <span class="badge">Medium Level — Quiz 4</span>
+  <h1>Sthapatya Digital Skills Quiz 4</h1>
+  <p class="sub">Daily work tools: Gmail, Google Sheets, ChatGPT, Google Drive aur Video Creation. 20 questions, har sahi answer ka 1 mark. Har answer ke baad explanation dikhega.</p>
+  <label>Full name</label><input id="nm" maxlength="60" autocomplete="off">
+  <label>Designation / Role</label><input id="rl" maxlength="60" autocomplete="off">
+  <div id="err" class="note"></div>
+  <button id="go">Start Quiz</button>
+  <div><button class="link" id="adm">Admin</button></div>
+</div>
+
+<div id="quiz" class="card hide">
+  <div class="sub" id="prog"></div>
+  <div class="bar"><i id="pb"></i></div>
+  <div class="sec" id="qs"></div>
+  <div class="q" id="qt"></div>
+  <div id="opts"></div>
+  <div id="ex" class="exp hide"></div>
+  <button id="nx" class="hide">Next</button>
+</div>
+
+<div id="result" class="card hide">
+  <h2 id="rname"></h2>
+  <div class="big" id="rscore"></div>
+  <div class="sub" id="rmeta"></div>
+  <h2 style="margin-top:20px">Section-wise result</h2>
+  <div id="rsec"></div>
+  <h2 style="margin-top:20px">Areas to improve</h2>
+  <div id="rimp" class="sub"></div>
+  <div id="rsave" class="sub" style="margin-top:12px"></div>
+  <button onclick="location.reload()">Back to start</button>
+</div>
+
+<div id="login" class="card hide">
+  <h2>Admin login</h2>
+  <label>Password</label><input id="pw" type="password">
+  <div id="lerr" class="note"></div>
+  <button id="lg">Open dashboard</button>
+  <button class="alt" onclick="location.reload()">Cancel</button>
+</div>
+
+<div id="dash" class="card hide">
+  <h2>Quiz 4 — Results dashboard</h2>
+  <div id="dmsg" class="sub"></div>
+  <div style="overflow-x:auto"><table id="dt"></table></div>
+  <div id="sc"></div>
+  <div id="tsum" style="overflow-x:auto"></div>
+  <button id="xl">Download Excel (.xlsx)</button> <button class="alt" id="csv">Download CSV</button>
+  <button class="alt" onclick="location.reload()">Close</button>
+</div>
+
+</div>
+<script>
+var API="https://script.google.com/macros/s/AKfycbzG5vWCHu6pLN9TQA5K8HBnr5zx5XyS1WX7Sf3tN2A6e75mlZg0Kkcpw5dhDSPyCusI/exec";
+var QUIZ="Quiz 4";
+var SECS=["Gmail","Google Sheets","ChatGPT","Google Drive","Video Creation"];
+var Q=[
+{s:"Gmail",q:"Aapko 30 clients ko ek notice bhejna hai aur koi bhi client dusre clients ke email address nahi dekhna chahiye. Kya use karoge?",o:["To field mein saare 30 address","CC field mein saare 30 address","BCC field mein saare 30 address","Reply all"],a:2,e:"BCC sabhi recipients ko ek-dusre se chhupa deta hai. To aur CC mein sabke address dikhte hain, jo privacy ki problem hai."},
+{s:"Gmail",q:"Aapko 40 MB ki property brochure PDF bhejni hai. Gmail ki attachment limit 25 MB hai. Sabse sahi tareeka kya hai?",o:["Google Drive mein upload karke email mein link share karo","File ka naam badal kar dobara attach karo","Same file ko 3 alag emails mein todkar bhejo","Sirf WhatsApp se bhejo"],a:0,e:"25 MB se badi file ho to Gmail khud Drive link insert karne ka option deta hai. Link ka access sahi set karo (jaise Viewer)."},
+{s:"Gmail",q:"Aapko Mehta ke saare emails dhundhne hain jinme attachment ho aur pichhle 1 mahine ke andar aaye ho. Kaunsa search best hai?",o:["Mehta brochure","from:mehta has:attachment newer_than:1m","attachment Mehta only","label:Mehta date:last"],a:1,e:"from:, has:attachment aur newer_than: jaise search operators se result turant chhote ho jate hain. Inbox scroll karne se bahut time bachta hai."},
+{s:"Gmail",q:"Ek client ke email ka reply Friday subah dena hai, lekin aaj aap kuch nahi kar sakte. Gmail ka kaunsa feature sabse kaam aayega?",o:["Email delete kar do aur yaad rakho","Spam mark kar do","Bina label ke archive kar do","Friday subah tak Snooze kar do"],a:3,e:"Snooze email ko inbox se hata deta hai aur aapke chune hue time par wapas la deta hai, isse follow-up miss nahi hota."},
+{s:"Google Sheets",q:"Aapki sheet mein column B mein Area aur column D mein Monthly Rent hai. Sirf 'Malviya Nagar' ka total rent chahiye. Kaunsa formula sahi hai?",o:["=SUM(D:D)","=SUMIF(B:B,\"Malviya Nagar\",D:D)","=COUNTIF(B:B,\"Malviya Nagar\")","=VLOOKUP(\"Malviya Nagar\",D:D,1,0)"],a:1,e:"SUMIF sirf wahi rows jodta hai jahan column B condition se match kare. COUNTIF sirf rows ginta hai, rent nahi jodta."},
+{s:"Google Sheets",q:"Lead list mein same phone number kai baar enter ho gaya hai. Sabse tez clean-up kaise hoga?",o:["Ek-ek row aankh se dekh kar delete karo","Sheet ko A to Z sort karo","Extra rows ko hide kar do","Data > Data cleanup > Remove duplicates"],a:3,e:"Remove duplicates chune hue columns check karke repeat rows ek hi step mein hata deta hai. Clean karne se pehle backup copy zaroor rakho."},
+{s:"Google Sheets",q:"Aapke paas 500 leads hain aur Source column hai (99acres, Referral, Website). Har source ke kitne leads hain, yeh chahiye. Sabse sahi tool kaunsa hai?",o:["Pivot table","Data validation","Conditional formatting","Protect range"],a:0,e:"Pivot table bade data ko jaldi summarise karta hai: Rows mein Source aur Values mein Count of leads. Data badalne par yeh khud update ho jata hai."},
+{s:"Google Sheets",q:"Sheet 1 mein Property ID hai aur Sheet 2 mein Property ID ke saath Rent hai. Aap chahte ho ki ID match karke Rent Sheet 1 mein apne aap aa jaye. Kaunsa function?",o:["SUMIF","CONCATENATE","VLOOKUP ya XLOOKUP","TRIM"],a:2,e:"VLOOKUP/XLOOKUP dusri table mein value (ID) dhundhkar matching column (jaise Rent) wapas dete hain."},
+{s:"ChatGPT",q:"Aap ChatGPT se agreement draft improve karwana chahte ho, lekin draft mein client ka asli naam, phone number aur rent amount hai. Kya karna chahiye?",o:["Sab kuch jaisa hai waisa paste kar do","Paste karne se pehle naam, phone number aur private details hata do ya badal do","Paste karo, phir chat delete kar do","Sirf bade client ho to share karo"],a:1,e:"AI tools mein confidential client ya company data kabhi share mat karo. Asli details ki jagah [Client], [Amount] jaise placeholder use karo."},
+{s:"ChatGPT",q:"Aapke paas 3 warehouses ki details hain aur unka jaldi comparison chahiye. Kaunsa prompt sabse kaam ka result dega?",o:["Warehouses ke baare mein batao","Kaunsa warehouse achha hai?","Inko compare karo","In 3 warehouses ko table mein compare karo, columns: area, rent, size, pros, cons. Phir ek chhoti recommendation do."],a:3,e:"Clear task aur output format (table, columns) dene se answer zyada kaam ka milta hai. Vague prompt se vague answer aata hai."},
+{s:"ChatGPT",q:"ChatGPT kehta hai ki Jaipur ki ek locality ka average rent Rs 45 per sq ft hai. Aapko yeh client report mein daalna hai. Kya karoge?",o:["Pehle kisi reliable source ya apne data se verify karo","Seedha use karo, ChatGPT hamesha sahi hota hai","Safe side ke liye 10% badha do","Number hi mat likho, kabhi nahi"],a:0,e:"AI kabhi-kabhi purane ya galat figures bhi poore confidence se de deta hai. Client work mein use karne se pehle numbers hamesha fact-check karo."},
+{s:"ChatGPT",q:"Nayi warehouse listing ke liye LinkedIn post banwane ke liye kaunsa prompt sabse achha result dega?",o:["Ek post likho","Achha sa bana do","Ek real estate marketer ki tarah business owners ke liye Jaipur ki 10,000 sq ft warehouse par 100 words ki LinkedIn post likho. Friendly tone rakho aur end mein call to action do.","Sab kuch ke baare mein bahut lambi post likho"],a:2,e:"Achhe prompt mein role, audience, goal, length aur tone hota hai. Jitna zyada context, utna achha draft."},
+{s:"Google Drive",q:"Aap chahte ho ki client sirf aapki price list PDF padh sake, edit ya aage share na kar sake. Kaunsa access doge?",o:["Editor","Viewer","Owner","Anyone can edit"],a:1,e:"Viewer sirf padhne deta hai. Hamesha utna hi kam access do jitna us vyakti ko sach mein chahiye."},
+{s:"Google Drive",q:"Property documents ke liye Drive folders organise karne ka sahi tareeka kaunsa hai?",o:["Saari files Desktop par rakho","Saari files bina folder ke My Drive mein save karo","Files ke naam random rakho aur baad mein search karo","Property > Area > Property Name jaise clear folders banao, file names aur dates consistent rakho"],a:3,e:"Clear folder structure aur consistent file names se files dhundhna aur share karna aasaan hota hai. Koi aur kaam sambhale to bhi dikkat nahi hoti."},
+{s:"Google Drive",q:"Ek employee company chhod raha hai aur kai zaroori files uske personal My Drive mein hain. Jaane se pehle kya karna chahiye?",o:["Files ko shared company folder mein move ya transfer karo","Kuch nahi, Google sab rakh leta hai","Aakhri din usse files ek-ek karke email karwao","Pehle uska account delete kar do"],a:0,e:"Kisi ke account ki files account hatne par kho sakti hain. Kaam ki files samay par shared folder mein move karo ya ownership transfer karo."},
+{s:"Video Creation",q:"Aap Instagram Reels aur YouTube Shorts ke liye video bana rahe ho. Sabse sahi format kaunsa hai?",o:["Horizontal 16:9","Sirf Square 1:1","Vertical 9:16","Koi bhi format, farak nahi padta"],a:2,e:"Reels aur Shorts vertical 9:16 screen ke liye bane hain. Horizontal video phone par bade kaale bars ke saath dikhta hai."},
+{s:"Video Creation",q:"Chhoti property video mein sabse zaroori cheez kya hai?",o:["Shuru mein lamba logo animation","Pehle 3 seconds mein strong hook, jaise best view ya main fayda","Sirf background music","Har shot mein tez zoom"],a:1,e:"Viewer kuch hi seconds mein decide kar leta hai ki video dekhna hai ya nahi. Sabse interesting visual ya clear benefit se shuru karo."},
+{s:"Video Creation",q:"Bahut log video mute par dekhte hain. Isko kaise handle karoge?",o:["Captions ya subtitles lagao","Music ki awaaz badha do","Ignore karo, log sound on kar lenge","Video se saari speech hata do"],a:0,e:"Captions se bina sound ke bhi message samajh aata hai, aur jinhe audio samajhna mushkil lagta hai unki bhi madad hoti hai."},
+{s:"Video Creation",q:"Aap phone se warehouse walkthrough video shoot kar rahe ho. Sabse achha result kisse milega?",o:["Tez chalo aur baar-baar zoom in-out karo","Time bachane ke liye andhere kone mein shoot karo","Bina ruke ek bahut lamba clip record karo","Phone steady rakho, achhi light mein shoot karo aur dheere-dheere space mein chalo"],a:3,e:"Steady, achhi light wale aur slow shots professional lagte hain. Hilta ya andhera footage achhi property ko bhi kharab dikha deta hai."},
+{s:"Video Creation",q:"Property marketing video ka end kaise hona chahiye?",o:["Achanak bina kisi message ke","Lambe thank-you speech ke saath","Clear call to action ke saath, jaise 'Site visit ke liye Sthapatya Leasing ko call karein', aur contact details","Khali kaali screen ke saath"],a:2,e:"Har marketing video mein viewer ke liye agla step hona chahiye. Clear call to action aur contact details se views enquiries mein badalte hain."}
+];
+function tot(s){return Q.filter(function(q){return q.s===s}).length}
+var i=0,score=0,sec={},lock=false,user={};
+function $(x){return document.getElementById(x)}
+function show(id){["start","quiz","result","login","dash"].forEach(function(k){$(k).classList.toggle("hide",k!==id)})}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function grade(p){return p>=85?"A+":p>=70?"A":p>=55?"B":p>=40?"C":"D"}
+$("go").onclick=function(){
+  var n=$("nm").value.trim(),r=$("rl").value.trim();
+  if(!n||!r){$("err").textContent="Please enter your name and designation.";return}
+  user={name:n,role:r};i=0;score=0;sec={};SECS.forEach(function(s){sec[s]={c:0,t:0}});
+  Q.forEach(function(q){sec[q.s].t++});
+  show("quiz");render();
+};
+function render(){
+  var q=Q[i];lock=false;
+  $("prog").textContent="Question "+(i+1)+" of "+Q.length;
+  $("pb").style.width=(i/Q.length*100)+"%";
+  $("qs").textContent=q.s;$("qt").textContent=q.q;
+  $("ex").classList.add("hide");$("nx").classList.add("hide");
+  $("nx").textContent=i===Q.length-1?"See result":"Next";
+  var h=$("opts");h.innerHTML="";
+  q.o.forEach(function(t,k){
+    var b=document.createElement("button");b.className="opt";
+    b.textContent=String.fromCharCode(65+k)+".  "+t;
+    b.onclick=function(){pick(k)};h.appendChild(b);
+  });
+}
+function pick(k){
+  if(lock)return;lock=true;
+  var q=Q[i],bs=$("opts").children;
+  for(var j=0;j<bs.length;j++){bs[j].disabled=true;if(j===q.a)bs[j].classList.add("ok")}
+  if(k===q.a){score++;sec[q.s].c++}else bs[k].classList.add("no");
+  $("ex").textContent=(k===q.a?"Correct. ":"Not correct. ")+q.e;
+  $("ex").classList.remove("hide");$("nx").classList.remove("hide");
+}
+$("nx").onclick=function(){i++;if(i<Q.length)render();else finish()};
+function finish(){
+  var pct=Math.round(score/Q.length*100),g=grade(pct);
+  show("result");
+  $("rname").textContent=user.name+" — "+user.role;
+  $("rscore").textContent=score+" / "+Q.length;
+  $("rmeta").textContent=pct+"%  |  Grade "+g;
+  var h="",weak=[];
+  SECS.forEach(function(s){
+    var p=Math.round(sec[s].c/sec[s].t*100);
+    h+='<div class="row"><b>'+esc(s)+'</b><div class="bar"><i style="width:'+p+'%"></i></div><span>Correct '+sec[s].c+' | Wrong '+(sec[s].t-sec[s].c)+'</span></div>';
+    if(p<60)weak.push(s);
+  });
+  $("rsec").innerHTML=h;
+  $("rimp").textContent=weak.length?"Please practise: "+weak.join(", ")+".":"Great work. Keep practising to stay sharp.";
+  var sections={};SECS.forEach(function(s){sections[s]=sec[s].c});
+  var body={quiz:QUIZ,name:user.name,role:user.role,score:score,pct:pct,grade:g,sections:sections};
+  $("rsave").textContent="Saving your result...";
+  fetch(API,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)})
+   .then(function(){$("rsave").textContent="Your result has been submitted."})
+   .catch(function(){$("rsave").textContent="Could not save the result. Please tell the admin and take a screenshot of this page."});
+}
+/* admin */
+$("adm").onclick=function(){show("login")};
+$("lg").onclick=function(){
+  if($("pw").value!=="sthapatya@2026"){$("lerr").textContent="Wrong password.";return}
+  show("dash");loadDash();
+};
+var rows=[];
+function loadDash(){
+  if(location.protocol==="file:"){$("dmsg").textContent="Open this quiz from the website link (not from a file on the computer) to see the dashboard.";return}
+  $("dmsg").textContent="Loading...";
+  fetch(API+"?quiz="+encodeURIComponent(QUIZ)).then(function(r){return r.json()}).then(function(j){
+    rows=(j.data||[]).slice().reverse();
+    if(!rows.length){$("dmsg").textContent="No results yet.";$("dt").innerHTML="";$("tsum").innerHTML="";return}
+    $("dmsg").textContent=rows.length+" result(s). Average: "+Math.round(rows.reduce(function(a,r){return a+parseFloat(r.Percentage||0)},0)/rows.length)+"%";
+    var h="<tr><th>#</th><th>Name</th><th>Role</th><th>Score</th><th>%</th><th>Grade</th>";
+    SECS.forEach(function(x){h+="<th>"+esc(x)+"<br><small>Right / Wrong</small></th>"});
+    h+="<th>Date</th><th>Scorecard</th></tr>";
+    var sum={};SECS.forEach(function(x){sum[x]=0});
+    rows.forEach(function(r,k){
+      h+="<tr><td>"+(k+1)+"</td><td>"+esc(r.Name)+"</td><td>"+esc(r.Role)+"</td><td>"+esc(r.Score)+"</td><td>"+esc(r.Percentage)+"</td><td>"+esc(r.Grade)+"</td>";
+      SECS.forEach(function(x){var c=parseInt(r[x],10)||0;sum[x]+=c;h+='<td><span class="g">'+c+'</span> / <span class="r">'+(tot(x)-c)+'</span></td>'});
+      h+="<td>"+esc(r.Date)+'</td><td><button class="alt" style="margin:0;padding:6px 10px;font-size:13px" data-i="'+k+'">View</button></td></tr>';
+    });
+    var t='<h2 style="margin-top:20px">Topic-wise summary (all employees)</h2><table><tr><th>Topic</th><th>Right</th><th>Wrong</th><th>Accuracy</th></tr>';
+    SECS.forEach(function(x){var all=tot(x)*rows.length,c=sum[x];t+="<tr><td>"+esc(x)+'</td><td class="g">'+c+'</td><td class="r">'+(all-c)+"</td><td>"+Math.round(c/all*100)+"%</td></tr>"});
+    t+="</table>";
+    $("tsum").innerHTML=t;
+    $("dt").innerHTML=h;
+  }).catch(function(){$("dmsg").textContent="Could not load data. Check the Apps Script deployment."});
+}
+$("dt").onclick=function(e){
+  var b=e.target.closest("button[data-i]");if(!b)return;
+  var r=rows[+b.getAttribute("data-i")],h="",weak=[];
+  SECS.forEach(function(x){var c=parseInt(r[x],10)||0,t=tot(x),p=Math.round(c/t*100);
+    h+='<div class="row"><b>'+esc(x)+'</b><div class="bar"><i style="width:'+p+'%"></i></div><span>Correct '+c+' | Wrong '+(t-c)+'</span></div>';
+    if(p<60)weak.push(x)});
+  $("sc").innerHTML='<div class="card" style="border:2px solid var(--brand)"><h2>'+esc(r.Name)+' — '+esc(r.Role)+'</h2><div class="big">'+esc(r.Score)+'</div><div class="sub">'+esc(r.Percentage)+' | Grade '+esc(r.Grade)+' | '+esc(r.Date)+'</div><h2 style="margin-top:16px">Topic-wise result</h2>'+h+'<h2 style="margin-top:16px">Areas to improve</h2><div class="sub">'+(weak.length?esc(weak.join(", ")):"None. Good work.")+'</div><button onclick="window.print()">Print scorecard</button> <button class="alt" onclick="document.getElementById(\'sc\').innerHTML=\'\'">Close</button></div>';
+  $("sc").scrollIntoView({behavior:"smooth"});
+};
+function xlData(){
+  var head=["Date","Name","Role","Score","Percentage","Grade"];SECS.forEach(function(x){head.push(x+" Right",x+" Wrong")});
+  var out=[head];
+  rows.forEach(function(r){var l=[r.Date,r.Name,r.Role,r.Score,r.Percentage,r.Grade];
+    SECS.forEach(function(x){var c=parseInt(r[x],10)||0;l.push(c,tot(x)-c)});out.push(l)});
+  return out;
+}
+$("xl").onclick=function(){
+  if(!rows.length){alert("No results to download yet.");return}
+  function go(){
+    var ws=XLSX.utils.aoa_to_sheet(xlData()),wb=XLSX.utils.book_new();
+    ws["!cols"]=[{wch:20},{wch:22},{wch:20},{wch:9},{wch:11},{wch:7}].concat(SECS.map(function(){return {wch:14}}).concat(SECS.map(function(){return {wch:14}})));
+    XLSX.utils.book_append_sheet(wb,ws,"Quiz 4");XLSX.writeFile(wb,"quiz4_results.xlsx");
+  }
+  if(window.XLSX){go();return}
+  var sc=document.createElement("script");
+  sc.src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+  sc.onload=go;sc.onerror=function(){alert("Excel library could not load. Use Download CSV, it opens in Excel too.")};
+  document.head.appendChild(sc);
+};
+$("csv").onclick=function(){
+  if(!rows.length)return;
+  var keys=["Date","Name","Role","Score","Percentage","Grade"];SECS.forEach(function(x){keys.push(x+" Right",x+" Wrong")});
+  var out=[keys.join(",")];
+  rows.forEach(function(r){out.push(keys.map(function(k){var v;if(/ Right$/.test(k)){v=parseInt(r[k.replace(" Right","")],10)||0}else if(/ Wrong$/.test(k)){v=tot(k.replace(" Wrong",""))-(parseInt(r[k.replace(" Wrong","")],10)||0)}else v=r[k];return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'}).join(","))});
+  var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([out.join("\n")],{type:"text/csv"}));
+  a.download="quiz4_results.csv";a.click();
+};
+</script>
+</body>
+</html>
